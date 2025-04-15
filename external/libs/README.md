@@ -1,18 +1,58 @@
 # External libraries
 
-This is similar to how Godot handles dependencies, they should be embedded, and documented
-following the template. Cmake integration should be done in a file named `<dependency_name.cmake>`,
-that lives at `<project_root>/cmake/dependencies`. For consistency, `dependency_name` should match
-the name of the top level folder here.
+## {fmt}
 
-## example_library (library name)
-
-- Description: A small description for the library.
-- Upstream: GitHub/Gitlab/Codeberg link, if any.
-- Version: branch, tag or any identifier (git commit hash here, this is the most important part)
-- License: name of the license (i.e `MIT`)
-- Updated: `dd/mm/YYYY` (last time this dependency was manually updated)
+- Description: A modern formatting library.
+- Upstream: https://github.com/fmtlib/fmt
+- Version: Releases Page, file `fmt-11.1.4.zip`, version `11.1.4`.
+- License: `MIT`
+- Updated: `15/04/2025`
 - Files extracted from upstream:
-    - A list of files extracted from the dependency repository, since dependencies
-      are embedded, it's better to bring only required files, this should be tested
-      thoroughly, as dependencies can break in many ways if this is done.
+    - `include/**`
+    - `src/**`
+    - `support/**`
+    - `ChangeLog.md`
+    - `CMakeLists.txt`
+    - `LICENSE`
+    - `README.md`
+
+## glad
+
+- Description: Multi-Language Vulkan/GL/GLES/EGL/GLX/WGL Loader-Generator based on the official specs.
+- Upstream: https://github.com/Dav1dde/glad
+- Version: Generated with https://gen.glad.sh/#generator=c&api=gl%3D3.3&profile=gl%3Dcore%2Cgles1%3Dcommon
+- License: `MIT`
+- Updated: `15/04/2025`
+- Files extracted from upstream:
+    - Use the whole downloaded file.
+
+## SDL3
+
+- Description: Simple Direct-Media Layer.
+- Upstream: https://github.com/libsdl-org/SDL
+- Version: Releases Page, file `SDL3-3.2.10.zip`, version `3.2.10`.
+- License: `Zlib`
+- Updated: `15/04/2025`
+- Files extracted from upstream:
+    - `cmake/**`
+    - `include/**`
+    - `src/**`
+    - `CMakeLists.txt`
+    - `LICENSE.txt`
+    - `README.md`
+    - `REVISION.txt`
+
+## spdlog
+
+- Description: Fast C++ logging library..
+- Upstream: https://github.com/gabime/spdlog
+- Version: Releases Page, file `Source code.zip`, version `1.15.2`.
+- License: `Zlib`
+- Updated: `15/04/2025`
+- Files extracted from upstream:
+    - `cmake/**`
+    - `include/**` (except `include/fmt/bundled/**` as its using the external {fmt})
+    - `src/**`
+    - `CMakeLists.txt`
+    - `LICENSE`
+    - `README.md`

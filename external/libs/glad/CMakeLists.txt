@@ -1,0 +1,7 @@
+project(glad LANGUAGES C)
+
+message("Generated with permalink https://gen.glad.sh/#generator=c&api=gl%3D3.3&profile=gl%3Dcore%2Cgles1%3Dcommon")
+message("OpenGL version 3.3 Core")
+
+add_library(glad STATIC src/gl.c)
+target_include_directories(glad PUBLIC include)
