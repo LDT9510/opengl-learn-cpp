@@ -44,7 +44,7 @@
 
 ## spdlog
 
-- Description: Fast C++ logging library..
+- Description: Fast C++ logging library.
 - Upstream: https://github.com/gabime/spdlog
 - Version: Releases Page, file `Source code.zip`, version `1.15.2`.
 - License: `Zlib`
@@ -56,3 +56,16 @@
     - `CMakeLists.txt`
     - `LICENSE`
     - `README.md`
+
+## imgui
+
+- Description: Dear ImGui: Bloat-free Graphical User interface for C++ with minimal dependencies
+- Upstream: https://github.com/ocornut/imgui
+- Version: `1.91.9b` (f5befd2d29e66809cd1110a152e375a7f1981f06)
+- License: `MIT`
+- Updated: `16/04/2025`
+- Files extracted from upstream (custom organization):
+  - `*.h`
+  - `*.cpp`
+  - `CMakeLists.txt`
+  - `LICENSE.txt`

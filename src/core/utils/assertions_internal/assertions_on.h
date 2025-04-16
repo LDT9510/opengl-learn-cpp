@@ -2,7 +2,7 @@
 
 #include "core/utils/helper_macros.h"
 
-#include <thirdparty/spdlog/spdlog.h>
+#include <spdlog/spdlog.h>
 
 /** ALL BUILDS: Logs a message with ERROR level and terminate the engine execution,
  *   triggers a break-point if debugging, use printf semantics for the message.

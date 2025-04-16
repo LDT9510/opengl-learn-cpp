@@ -1,11 +1,7 @@
 include("Utils")
+include("ExternalsUtils")
 
-#[[ Configure {fmt}.
-    Parameters:
-        target: The target to configure the library for.
-        use_thirdparty_includes: Activate the "#include thirdparty/..." convention.
-]]
-function(configure_external_fmt target use_thirdparty_includes)
+function(configure_external_fmt)
     set(LIB_NAME "fmt")
     announce("Configuring \"${LIB_NAME}\" external library.")
 
@@ -20,13 +16,4 @@ function(configure_external_fmt target use_thirdparty_includes)
     force_bool(FMT_UNICODE ON)
 
     add_external_subdirectory(${LIB_NAME})
-    target_link_libraries(${target} PRIVATE fmt::fmt)
-
-    if (use_thirdparty_includes)
-        copy_thirdparty_includes_glob(${LIB_NAME} "include/fmt/*.h")
-
-        target_include_thirdparty(${target} ${LIB_NAME})
-    endif ()
-
-
 endfunction()

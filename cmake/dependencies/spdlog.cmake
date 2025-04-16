@@ -1,12 +1,8 @@
 include("Utils")
+include("ExternalsUtils")
 
-#[[ Configure spdlog.
-    REQUIRES: {fmt}
-    Parameters:
-        target: The target to configure the library for.
-        use_thirdparty_includes: Activate the "#include thirdparty/..." convention.
-]]
-function(configure_external_spdlog target use_thirdparty_includes)
+# REQUIRES SDL3
+function(configure_external_spdlog target)
     set(LIB_NAME "spdlog")
     announce("Configuring \"${LIB_NAME}\" external library.")
 
@@ -42,14 +38,4 @@ function(configure_external_spdlog target use_thirdparty_includes)
     force_bool(SPDLOG_WCHAR_SUPPORT OFF)  # Support wchar api
 
     add_external_subdirectory(${LIB_NAME})
-    target_link_libraries(${target} PRIVATE spdlog::spdlog)
-
-    if (use_thirdparty_includes)
-        copy_thirdparty_includes_glob(${LIB_NAME} "include/spdlog/cfg/*.h" "cfg")
-        copy_thirdparty_includes_glob(${LIB_NAME} "include/spdlog/details/*.h" "details")
-        copy_thirdparty_includes_glob(${LIB_NAME} "include/spdlog/sink/*.h" "sink")
-        copy_thirdparty_includes_glob(${LIB_NAME} "include/spdlog/*.h")
-
-        target_include_thirdparty(${target} ${LIB_NAME})
-    endif ()
 endfunction()

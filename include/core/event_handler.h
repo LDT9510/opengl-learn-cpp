@@ -1,6 +1,6 @@
 #pragma once
 
-#include <thirdparty/SDL3/SDL.h>
+#include <SDL3/SDL.h>
 
 #include <functional>
 #include <optional>

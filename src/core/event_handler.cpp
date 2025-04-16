@@ -2,7 +2,8 @@
 
 #include "core/timing.h"
 
-#include <thirdparty/SDL3/SDL.h>
+#include <SDL3/SDL.h>
+#include <dev_ui/dev_ui.h>
 
 core::EventHandler::EventHandler(const Config& config) :
     m_windowResizingCallback{config.windowsResizingCallback},
@@ -23,7 +24,7 @@ void core::EventHandler::CollectInputAndProcessEvents() {
 
     SDL_Event e;
     while (SDL_PollEvent(&e)) {
-        // gui::ProcessInput(e);
+        dev_ui::ProcessInput(e);
 
         const auto keyScanCode = e.key.scancode;
         switch (e.type) {

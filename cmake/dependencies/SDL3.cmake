@@ -1,11 +1,7 @@
 include("Utils")
+include("ExternalsUtils")
 
-#[[ Configure SDL3.
-    Parameters:
-        target: The target to configure the library for.
-        use_thirdparty_includes: Activate the "#include thirdparty/..." convention.
-]]
-function(configure_external_sdl3 target use_thirdparty_includes)
+function(configure_external_sdl3)
     set(LIB_NAME "SDL3")
     announce("Configuring \"${LIB_NAME}\" external library.")
 
@@ -88,11 +84,4 @@ function(configure_external_sdl3 target use_thirdparty_includes)
     force_bool(SDL_XINPUT ON)  # Use Xinput for Windows
 
     add_external_subdirectory(${LIB_NAME})
-    target_link_libraries(${target} PRIVATE SDL3::SDL3)
-
-    if (use_thirdparty_includes)
-        copy_thirdparty_includes_glob(${LIB_NAME} "include/SDL3/*.h")
-
-        target_include_thirdparty(${target} ${LIB_NAME})
-    endif ()
 endfunction()

@@ -3,9 +3,10 @@
 #include "core/event_handler.h"
 #include "core/utils/assertions.h"
 
-#include <thirdparty/SDL3/SDL.h>
-#include <thirdparty/glad/gl.h>
-#include <thirdparty/spdlog/spdlog.h>
+#include <SDL3/SDL.h>
+#include <dev_ui/dev_ui.h>
+#include <glad/gl.h>
+#include <spdlog/spdlog.h>
 
 #ifdef _WIN32
     #define WIN32_LEAN_AND_MEAN
@@ -91,6 +92,8 @@ core::Window core::Window::InitializeWithContext(const Config& config) {
     int nrAttributes;
     glGetIntegerv(GL_MAX_VERTEX_ATTRIBS, &nrAttributes);
     SPDLOG_INFO("Maximum number of vertex attributes supported: {} ", nrAttributes);
+
+    dev_ui::InitForWindow(pWindowHandle, pContextHandle);
 
     return Window{pWindowHandle, pContextHandle};
 }

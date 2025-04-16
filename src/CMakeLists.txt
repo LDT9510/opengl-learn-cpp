@@ -1,17 +1,23 @@
 include("SymlinkContent")
-include("ExternalsUtils")
-include("dependencies/SDL3")
-include("dependencies/fmt")
-include("dependencies/glad")
-include("dependencies/spdlog")
 
 project("opengl-learn" LANGUAGES CXX)
+
+# ========== Libraries ===========
+add_subdirectory(libs/dev_ui)
 
 file(GLOB_RECURSE CORE_FILES "core/*.cpp" "core/*.h")
 file(GLOB_RECURSE INCLUDE_FILES "../include/core/*.h")
 
 add_executable(${PROJECT_NAME} "main.cpp" ${CORE_FILES} ${INCLUDE_FILES})
-target_include_directories(${PROJECT_NAME} PUBLIC  "../include" PRIVATE .)
+target_include_directories(${PROJECT_NAME} PUBLIC "../include" PRIVATE "core")
+target_link_libraries(${PROJECT_NAME} PRIVATE
+        SDL3::SDL3
+        fmt::fmt
+        spdlog::spdlog
+        glad
+        DevUi
+)
+
 
 # C++ standard stuff
 set_target_properties(${PROJECT_NAME} PROPERTIES CXX_STANDARD 20)
@@ -30,10 +36,10 @@ target_compile_definitions(${PROJECT_NAME} PRIVATE
         $<$<CONFIG:Debug>:DEBUG_BUILD>
         $<$<CONFIG:Release>:RELEASE_BUILD>
         $<$<CONFIG:RelWithDebInfo>:DEBUG_RELEASE_BUILD>
-        
+
         # logging
         $<$<CONFIG:Release>:SPDLOG_NO_SOURCE_LOC>
-        
+
         # options
         $<$<BOOL:${ASSERTIONS_IN_RELEASE}>:ASSERTIONS_IN_RELEASE>
         $<$<BOOL:${DISABLE_LOGGING}>:DISABLE_LOGGING>
@@ -50,9 +56,3 @@ else ()
 
     # desktop specific stuff
 endif ()
-
-# configure external dependencies
-configure_external_sdl3(${PROJECT_NAME} ON)
-configure_external_fmt(${PROJECT_NAME} ON)
-configure_external_glad(${PROJECT_NAME} ON)
-configure_external_spdlog(${PROJECT_NAME} ON)
