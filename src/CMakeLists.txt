@@ -11,7 +11,7 @@ file(GLOB_RECURSE CORE_FILES "core/*.cpp" "core/*.h")
 file(GLOB_RECURSE INCLUDE_FILES "../include/core/*.h")
 
 add_executable(${PROJECT_NAME} "main.cpp" ${CORE_FILES} ${INCLUDE_FILES})
-target_include_directories(${PROJECT_NAME} PRIVATE "../include")
+target_include_directories(${PROJECT_NAME} PUBLIC  "../include" PRIVATE .)
 
 # C++ standard stuff
 set_target_properties(${PROJECT_NAME} PROPERTIES CXX_STANDARD 20)
@@ -27,7 +27,7 @@ target_compile_options(${PROJECT_NAME} PRIVATE
 # set custom definitions
 target_compile_definitions(${PROJECT_NAME} PRIVATE
         # build configuration
-        $<$<CONFIG:Debug>:DEBUG_BUILD=1>
+        $<$<CONFIG:Debug>:DEBUG_BUILD>
         $<$<CONFIG:Release>:RELEASE_BUILD>
         $<$<CONFIG:RelWithDebInfo>:DEBUG_RELEASE_BUILD>
         
@@ -35,8 +35,8 @@ target_compile_definitions(${PROJECT_NAME} PRIVATE
         $<$<CONFIG:Release>:SPDLOG_NO_SOURCE_LOC>
         
         # options
-        $<$<BOOL:ASSERTIONS_IN_RELEASE>:ASSERTIONS_IN_RELEASE>
-        $<$<BOOL:DISABLE_LOGGING>:DISABLE_LOGGING>
+        $<$<BOOL:${ASSERTIONS_IN_RELEASE}>:ASSERTIONS_IN_RELEASE>
+        $<$<BOOL:${DISABLE_LOGGING}>:DISABLE_LOGGING>
 )
 
 # this is set by the Emscripten toolchain
