@@ -1,4 +1,5 @@
 #include "core/event_handler.h"
+#include "core/renderer.h"
 #include "core/window.h"
 
 #include <thirdparty/SDL3/SDL.h>
@@ -14,10 +15,14 @@ int main() {
         .windowsQuitCallback     = [&window]() { window.OnWindowQuitEvent(); },
     }};
 
+    core::Renderer renderer;
+
     window.KeyboardInputHandler(eventHandler);
 
     while (window.ShouldStayOpen()) {
         eventHandler.CollectInputAndProcessEvents();
+
+        renderer.Render();
 
         window.GlSwap();
     }
