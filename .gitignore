@@ -8,8 +8,9 @@
 # Except clang-format configuration file
 !/.clang-format
 
-# Except source and content
+# Except source, includes and content
 !/src/**/*
+!/include/**/*
 !/content/**/*
 
 # Except CMake files

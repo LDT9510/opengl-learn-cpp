@@ -5,6 +5,7 @@
 
 #include <thirdparty/SDL3/SDL.h>
 #include <thirdparty/glad/gl.h>
+#include <thirdparty/spdlog/spdlog.h>
 
 #ifdef _WIN32
     #define WIN32_LEAN_AND_MEAN
