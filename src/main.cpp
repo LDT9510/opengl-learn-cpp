@@ -16,7 +16,9 @@ int main() {
         .windowsQuitCallback     = [&window]() { window.OnWindowQuitEvent(); },
     }};
 
+    // requires an initialized OpenGL context
     core::Renderer renderer;
+    renderer.Setup();
 
     window.KeyboardInputHandler(eventHandler);
 
