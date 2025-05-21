@@ -1,5 +1,7 @@
 #include "core/renderer.h"
 
+#include "core/event_handler.h"
+
 #include <dev_ui/dev_ui.h>
 #include <glad/gl.h>
 
@@ -7,20 +9,28 @@ core::Renderer::Renderer() { // NOLINT(*-pro-type-member-init)
     // generate the buffers and get back a handle to them
     glGenVertexArrays(1, &m_vao);
     glGenBuffers(1, &m_vbo);
+    glGenBuffers(1, &m_ebo);
 }
 
 core::Renderer::~Renderer() {
     // cleanup
     glDeleteVertexArrays(1, &m_vao);
     glDeleteBuffers(1, &m_vbo);
+    glDeleteBuffers(1, &m_ebo);
 }
 
-void core::Renderer::Setup() const {
+void core::Renderer::SetupRendering() const {
     // clang-format off
     constexpr float vertices[] = {
-        0.0f,  0.5f,  0.0f, // top
+        0.5f,  0.5f,  0.0f, // top right
         0.5f,  -0.5f, 0.0f, // bottom right
         -0.5f, -0.5f, 0.0f, // bottom left
+        -0.5f, 0.5f,  0.0f // top left
+    };
+    const unsigned int indices[] = {
+        // note that we start from 0!
+        0, 1, 3, // first Triangle
+        1, 2, 3, // second Triangle
     };
     // clang-format on
 
@@ -29,6 +39,9 @@ void core::Renderer::Setup() const {
     glBindVertexArray(m_vao);
     glBindBuffer(GL_ARRAY_BUFFER, m_vbo);
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_ebo);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), nullptr);
     glEnableVertexAttribArray(0);
@@ -50,6 +63,8 @@ void core::Renderer::Setup() const {
 }
 
 void core::Renderer::Render() const {
+    glPolygonMode(GL_FRONT_AND_BACK, m_wireframeActive ? GL_LINE : GL_FILL);
+
     // clear the background
     glClear(GL_COLOR_BUFFER_BIT);
 
@@ -58,7 +73,7 @@ void core::Renderer::Render() const {
 
     // bind the array to be drawn and issue the draw call
     glBindVertexArray(m_vao);
-    glDrawArrays(GL_TRIANGLES, 0, 3);
+    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
 }
 
 void core::Renderer::RenderDevUi() {
@@ -87,4 +102,10 @@ void core::Renderer::RenderDevUi() {
     }
 
     im::End();
+}
+
+void core::Renderer::HandleInput(const EventHandler& eventHandler) {
+    if (eventHandler.IsKeyJustPressed(SDL_SCANCODE_U)) {
+        m_wireframeActive = !m_wireframeActive;
+    }
 }

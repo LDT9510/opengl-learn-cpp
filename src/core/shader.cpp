@@ -1,4 +1,4 @@
-#include "core/shader.hpp"
+#include "core/shader.h"
 
 #include <glad/gl.h>
 #include <spdlog/spdlog.h>
@@ -22,14 +22,14 @@ static unsigned int CreateShader(
     return shaderId;
 }
 
-core::Shader::Shader(const char* vertexCode, const char* fragmentCode) {
+core::Shader::Shader(std::string_view vertexCode, std::string_view fragmentCode) {
     int success = 0;
 
-    if (std::strlen(vertexCode) == 0 || std::strlen(fragmentCode) == 0) {
+    if (vertexCode.empty() || fragmentCode.empty()) {
         m_isValid = false;
     } else {
-        const unsigned int vertexId   = CreateShader(vertexCode, GL_VERTEX_SHADER, "VERTEX");
-        const unsigned int fragmentId = CreateShader(fragmentCode, GL_FRAGMENT_SHADER, "FRAGMENT");
+        const unsigned int vertexId   = CreateShader(vertexCode.data(), GL_VERTEX_SHADER, "VERTEX");
+        const unsigned int fragmentId = CreateShader(fragmentCode.data(), GL_FRAGMENT_SHADER, "FRAGMENT");
         m_programId                   = glCreateProgram();
 
         glAttachShader(m_programId, vertexId);

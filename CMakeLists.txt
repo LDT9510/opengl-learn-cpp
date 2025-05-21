@@ -12,6 +12,7 @@ include("dependencies/imgui")
 
 # ========== Global Configuration ===========
 include("Config")
+include("Globals")
 include("Options")
 
 # =========== Dependencies ===============

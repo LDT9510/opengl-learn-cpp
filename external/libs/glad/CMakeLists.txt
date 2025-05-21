@@ -5,3 +5,9 @@ message(STATUS "OpenGL version 3.3 Core")
 
 add_library(glad STATIC src/gl.c)
 target_include_directories(glad PUBLIC include)
+
+# workaround for <KHR/khrplatform.h> headers using non-standard compiler extensions
+# MSVC seems not to care so its not considered here
+if(WIN32 AND (CMAKE_C_COMPILER_ID STREQUAL "Clang"))
+    target_compile_definitions(glad PUBLIC -D__SCITECH_SNAP__=1)
+endif ()

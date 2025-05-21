@@ -4,10 +4,14 @@
 
 #include <SDL3/SDL.h>
 #include <dev_ui/dev_ui.h>
+#include <windows.h>
+#include <fmt/format.h>
+
+#include <string>
 
 int main() {
     auto window = core::Window::InitializeWithContext({
-        .title       = "Learning OpenGL",
+        .title       = fmt::format("Learning OpenGL (PID: {})", std::to_string(GetCurrentProcessId())).c_str(),
         .isResizable = false,
     });
 
@@ -18,18 +22,22 @@ int main() {
 
     // requires an initialized OpenGL context
     core::Renderer renderer;
-    renderer.Setup();
+    renderer.SetupRendering();
 
-    window.KeyboardInputHandler(eventHandler);
+    eventHandler.RegisterKeyboardInputHandler([&renderer,
+                                               &window](const core::EventHandler& handler) {
+        renderer.HandleInput(handler);
+        window.HandleInput(handler);
+    });
 
     while (window.ShouldStayOpen()) {
         dev_ui::CreateFrame();
-        
-        eventHandler.CollectInputAndProcessEvents();
+
+        eventHandler.CollectAndProcessInput();
 
         renderer.Render();
-        
-        renderer.RenderDevUi();
+
+        core::Renderer::RenderDevUi();
 
         dev_ui::RenderFrame();
 

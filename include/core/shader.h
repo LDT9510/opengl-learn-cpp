@@ -1,17 +1,18 @@
 #pragma once
 
 // #include <glm/glm.hpp>
+#include <string_view>
 
 namespace core {
 
 class Shader {
 public:
-    Shader(const char* vertexCode, const char* fragmentCode);
+    Shader(std::string_view vertexCode, std::string_view fragmentCode);
     Shader(const Shader& other) = delete;
 
     Shader(Shader&& other) noexcept :
         m_programId{other.m_programId}, m_isValid{other.m_isValid} {
-        // when moved, reset the program ID so that the other destructor
+        // when moved, reset "other" program ID so that its destructor
         // don't destroy the program
         other.m_programId = 0u;
     };
@@ -23,7 +24,7 @@ public:
         m_programId = other.m_programId;
         m_isValid   = other.m_isValid;
 
-        // when moved, reset the program ID so that the other destructor
+        // when moved, reset "other" program ID so that its destructor
         // don't destroy the program
         other.m_programId = 0u;
 

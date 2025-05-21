@@ -8,7 +8,6 @@
 
 void dev_ui::InitForWindow(SDL_Window* sdlWindow, SDL_GLContext sdlContext)
 {
-    IMGUI_CHECKVERSION();
     ImGui::CreateContext();
     // second parameter is not used
     ImGui_ImplSDL3_InitForOpenGL(sdlWindow, sdlContext);

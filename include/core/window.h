@@ -1,7 +1,6 @@
 #pragma once
 
 #include <SDL3/SDL.h>
-
 #include <memory>
 
 namespace core {
@@ -44,11 +43,10 @@ public:
     bool ShouldStayOpen() const;
     void GlSwap() const;
     void OnWindowQuitEvent();
-    void KeyboardInputHandler(const EventHandler& eventHandler);
+    void HandleInput(const EventHandler& eventHandler);
 
     SDL_Window*   GetWindowHandle() const { return m_window.get(); }
     SDL_GLContext GetGlContext() const { return m_glContext.get(); }
-
 
 private:
     // ReSharper disable once CppParameterMayBeConst

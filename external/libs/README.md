@@ -51,8 +51,8 @@
 - Updated: `15/04/2025`
 - Files extracted from upstream:
     - `cmake/**`
-    - `include/**` (except `include/fmt/bundled/**` as its using the external {fmt})
-    - `src/**`
+    - `include/**` (except `include/fmt/bundled/**` as it's using the external {fmt})
+    - `src/**` (except `src/bundled_fmtlib_format.cpp`, same reason above)
     - `CMakeLists.txt`
     - `LICENSE`
     - `README.md`

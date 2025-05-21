@@ -1,26 +1,33 @@
 #pragma once
 
+#include "core/shader.h"
 #include "shaders/shader_source.h"
-
-#include "core/shader.hpp"
 
 namespace core {
 
 using namespace shaders;
+
+class EventHandler;
 
 class Renderer {
 public:
     Renderer();
     ~Renderer();
 
-    void Setup() const;
+    static void RenderDevUi();
+
+    void SetupRendering() const;
     void Render() const;
-    void RenderDevUi();
+    void HandleInput(const EventHandler& eventHandler);
+
 
 private:
     unsigned int m_vao;
     unsigned int m_vbo;
-    core::Shader m_shader{vertex::kSource, fragment::kSource};
+    unsigned int m_ebo;
+    Shader       m_shader{vertex::kSource, fragment::kSource};
+
+    bool m_wireframeActive{false};
 };
 
 } // namespace core

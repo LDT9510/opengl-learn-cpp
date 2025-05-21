@@ -19,9 +19,11 @@
 /** DEBUG BUILD: Asserts that expr is truthy. Triggers a break-point if debugging.
  *   Provide a message using printf semantics.
  */
-#define CHECK_F(expr, msg, ...)             \
-    do {                                    \
-        if (!expr) CRASH(msg, __VA_ARGS__); \
+#define CHECK_F(expr, msg, ...)      \
+    do {                             \
+        if (!(expr)) {               \
+            CRASH(msg, __VA_ARGS__); \
+        }                            \
     } while (0)
 
 /** DEBUG BUILD: Asserts that expr is truthy. Triggers a break-point if debugging.
@@ -46,9 +48,9 @@
 /** DEBUG BUILDS: Same behavior as DX_CHECK_F macro. Provide a message using
  *   printf semantics.
  */
-#define VERIFY_F(expr, msg, ...)                \
-    do {                                        \
-        if (!expr) LOG_FATAL(msg, __VA_ARGS__); \
+#define VERIFY_F(expr, msg, ...)                  \
+    do {                                          \
+        if (!(expr)) LOG_FATAL(msg, __VA_ARGS__); \
     } while (0)
 
 /** DEBUG BUILDS: Same behavior as DX_CHECK macro. Provide a message using

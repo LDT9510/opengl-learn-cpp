@@ -1,12 +1,21 @@
-# ========== Reference directories ===========
+# ========== Global configuration ===========
 
-#[[ The root of the project. ]]
-set(PROJECT_ROOT_DIR "${PROJECT_SOURCE_DIR}")
+# Default C++ standard
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
 
-#[[ Sources of external libraries. ]]
-set(EXTERNAL_LIBS_SOURCES_DIR "${PROJECT_ROOT_DIR}/external/libs")
-
-#[[ Compiler type, for setting flags, etc. ]]
-set(COMPILER_GCC_LIKE "$<COMPILE_LANG_AND_ID:CXX,ARMClang,AppleClang,Clang,GNU,LCC>")
-set(COMPILER_MSVC_LIKE "$<COMPILE_LANG_AND_ID:CXX,MSVC>")
+# Set "Edit and continue" for MSVC debug builds, this is required by "Blink" hot reloading
+#cmake_policy(SET CMP0141 NEW) # required
+#set(CMAKE_MSVC_DEBUG_INFORMATION_FORMAT "$<$<CONFIG:Debug,RelWithDebInfo>:EditAndContinue>")
+string(REGEX REPLACE "/Zi" "/ZI" CMAKE_C_FLAGS   "${CMAKE_C_FLAGS}")
+string(REGEX REPLACE "/Zi" "/ZI" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
+string(REGEX REPLACE "/Zi" "/ZI" CMAKE_C_FLAGS_DEBUG   "${CMAKE_C_FLAGS_DEBUG}")
+string(REGEX REPLACE "/Zi" "/ZI" CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG}")
+string(REGEX REPLACE "/Zi" "/ZI" CMAKE_C_FLAGS_DEBUG_INIT   "${CMAKE_C_FLAGS_DEBUG_INIT}")
+string(REGEX REPLACE "/Zi" "/ZI" CMAKE_CXX_FLAGS_DEBUG_INIT "${CMAKE_CXX_FLAGS_DEBUG_INIT}")
+string(REGEX REPLACE "/Zi" "/ZI" CMAKE_C_FLAGS_RELWITHDEBINFO   "${CMAKE_C_FLAGS_RELWITHDEBINFO}")
+string(REGEX REPLACE "/Zi" "/ZI" CMAKE_CXX_FLAGS_RELWITHDEBINFO "${CMAKE_CXX_FLAGS_RELWITHDEBINFO}")
+string(REGEX REPLACE "/Zi" "/ZI" CMAKE_C_FLAGS_RELWITHDEBINFO_INIT   "${CMAKE_C_FLAGS_RELWITHDEBINFO_INIT}")
+string(REGEX REPLACE "/Zi" "/ZI" CMAKE_CXX_FLAGS_RELWITHDEBINFO_INIT "${CMAKE_CXX_FLAGS_RELWITHDEBINFO_INIT}")
 

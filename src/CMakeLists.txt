@@ -1,7 +1,6 @@
 include("SymlinkContent")
 
 project("opengl-learn" LANGUAGES CXX)
-
 # ========== Libraries ===========
 add_subdirectory(libs/dev_ui)
 
@@ -18,16 +17,10 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
         DevUi
 )
 
-
-# C++ standard stuff
-set_target_properties(${PROJECT_NAME} PROPERTIES CXX_STANDARD 20)
-set_target_properties(${PROJECT_NAME} PROPERTIES CXX_STANDARD_REQUIRED ON)
-set_target_properties(${PROJECT_NAME} PROPERTIES CXX_EXTENSIONS OFF)
-
 # set warnings
 target_compile_options(${PROJECT_NAME} PRIVATE
-        "$<${COMPILER_GCC_LIKE}:-Wall;-Wextra;-W;-Werror;-pedantic-errors>"
-        "$<${COMPILER_MSVC_LIKE}:/nologo;/W4;/WX>"
+        "$<${CXX_COMPILER_GCC_LIKE_GXPR}:-Wall;-Wextra;-W;-Werror;-pedantic-errors>"
+        "$<${CXX_COMPILER_MSVC_LIKE_GXPR}:/nologo;/W4;/WX;/EHsc>"
 )
 
 # set custom definitions

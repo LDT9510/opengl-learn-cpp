@@ -114,8 +114,8 @@ void core::Window::OnWindowQuitEvent() {
     m_shouldClose = true;
 }
 
-void core::Window::KeyboardInputHandler(const EventHandler& eventHandler) {
-    if (eventHandler.CheckKeyEvent(SDL_SCANCODE_ESCAPE)) m_shouldClose = true;
+void core::Window::HandleInput(const EventHandler& eventHandler) {
+    if (eventHandler.IsKeyPressed(SDL_SCANCODE_ESCAPE)) m_shouldClose = true;
 }
 
 static void PrintSdlVersion() {
