@@ -27,7 +27,7 @@ void core::Renderer::SetupRendering() const {
         -0.5f, -0.5f, 0.0f, // bottom left
         -0.5f, 0.5f,  0.0f // top left
     };
-    const unsigned int indices[] = {
+    constexpr unsigned int indices[] = {
         // note that we start from 0!
         0, 1, 3, // first Triangle
         1, 2, 3, // second Triangle
@@ -81,7 +81,7 @@ void core::Renderer::RenderDevUi() {
 
     im::Begin("Learning OpenGL");
 
-    if (ImGui::CollapsingHeader("Global Shortcuts")) {
+    if (im::CollapsingHeader("Global Shortcuts")) {
         static constexpr ImGuiTableFlags tableFlags =
             ImGuiTableFlags_RowBg | ImGuiTableFlags_Borders;
         static constexpr auto yellow = ImVec4(1.0f, 1.0f, 0.0f, 1.0f);
@@ -106,6 +106,6 @@ void core::Renderer::RenderDevUi() {
 
 void core::Renderer::HandleInput(const EventHandler& eventHandler) {
     if (eventHandler.IsKeyJustPressed(SDL_SCANCODE_U)) {
-        m_wireframeActive = !m_wireframeActive;
+       m_wireframeActive = !m_wireframeActive;
     }
 }
