@@ -15,6 +15,7 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
         spdlog::spdlog
         glad
         DevUi
+        glm::glm
 )
 
 # set warnings

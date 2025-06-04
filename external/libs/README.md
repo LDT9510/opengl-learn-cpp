@@ -69,3 +69,16 @@
   - `*.cpp`
   - `CMakeLists.txt`
   - `LICENSE.txt`
+
+## glm
+
+- Description: OpenGL Mathematics (light version)
+- Upstream: https://github.com/g-truc/glm
+- Version: `1.0.1` (0af55ccecd98d4e5a8d1fad7de25ba429d60e863)
+- License: `MIT`
+- Updated: `04/06/2025`
+- Files extracted from upstream:
+  - `cmake/**`
+  - `glm/**`
+  - `CMakeLists.txt`
+  - `copying.txt`

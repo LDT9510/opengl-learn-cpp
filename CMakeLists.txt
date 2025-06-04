@@ -9,6 +9,7 @@ include("dependencies/fmt")
 include("dependencies/glad")
 include("dependencies/spdlog")
 include("dependencies/imgui")
+include("dependencies/glm")
 
 # ========== Global Configuration ===========
 include("Config")
@@ -22,6 +23,7 @@ configure_external_fmt(${PROJECT_NAME})
 configure_external_spdlog(${PROJECT_NAME}) # depends on {fmt}
 configure_external_glad(${PROJECT_NAME})
 configure_external_imgui(${PROJECT_NAME})
+configure_external_glm(${PROJECT_NAME})
 
 # ========== Game ===========
 add_subdirectory(src)
