@@ -25,7 +25,7 @@ private:
     unsigned int m_vao;
     unsigned int m_vbo;
     unsigned int m_ebo;
-    Shader       m_shader{vertex::kSource, fragment::kSource};
+    Shader       m_shader{vertex::source, fragment::source};
 
     bool m_wireframeActive{false};
 };

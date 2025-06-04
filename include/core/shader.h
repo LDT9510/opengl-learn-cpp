@@ -33,7 +33,8 @@ public:
 
     ~Shader();
 
-    void Use() const;
+    void         Use() const;
+    unsigned int GetProgram() const;
     // void SetBool(const char* name, bool value) const;
     // void SetInt(const char* name, int value) const;
     // void SetFloat(const char* name, float value) const;

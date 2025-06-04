@@ -1,6 +1,7 @@
 #include "core/renderer.h"
 
 #include "core/event_handler.h"
+#include "core/timing.h"
 
 #include <dev_ui/dev_ui.h>
 #include <glad/gl.h>
@@ -67,6 +68,14 @@ void core::Renderer::Render() const {
 
     // bind the shader program
     m_shader.Use();
+
+    // calculate the color based on time
+    float timeValue           = timing::GetSdlElapsedSeconds();
+    float greenValue          = (sin(timeValue) / 2.0f) + 0.5f;
+    int   vertexColorLocation = glGetUniformLocation(m_shader.GetProgram(), "ourColor");
+
+    // update the uniform
+    glUniform4f(vertexColorLocation, 0.0f, greenValue, 0.0f, 1.0f);
 
     // bind the array to be drawn and issue the draw call
     glBindVertexArray(m_vao);

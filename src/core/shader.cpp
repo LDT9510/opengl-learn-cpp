@@ -28,9 +28,10 @@ core::Shader::Shader(std::string_view vertexCode, std::string_view fragmentCode)
     if (vertexCode.empty() || fragmentCode.empty()) {
         m_isValid = false;
     } else {
-        const unsigned int vertexId   = CreateShader(vertexCode.data(), GL_VERTEX_SHADER, "VERTEX");
-        const unsigned int fragmentId = CreateShader(fragmentCode.data(), GL_FRAGMENT_SHADER, "FRAGMENT");
-        m_programId                   = glCreateProgram();
+        const unsigned int vertexId = CreateShader(vertexCode.data(), GL_VERTEX_SHADER, "VERTEX");
+        const unsigned int fragmentId =
+            CreateShader(fragmentCode.data(), GL_FRAGMENT_SHADER, "FRAGMENT");
+        m_programId = glCreateProgram();
 
         glAttachShader(m_programId, vertexId);
         glAttachShader(m_programId, fragmentId);
@@ -59,6 +60,9 @@ void core::Shader::Use() const {
     } else {
         SPDLOG_ERROR("Invalid shader");
     }
+}
+unsigned int core::Shader::GetProgram() const {
+    return m_programId;
 }
 
 // void mygl::Shader::SetBool(const char* name, const bool value) const {
