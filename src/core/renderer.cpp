@@ -22,15 +22,12 @@ core::Renderer::~Renderer() {
 void core::Renderer::SetupRendering() const {
     // clang-format off
     constexpr float vertices[] = {
-        0.5f,  0.5f,  0.0f, // top right
-        0.5f,  -0.5f, 0.0f, // bottom right
-        -0.5f, -0.5f, 0.0f, // bottom left
-        -0.5f, 0.5f,  0.0f // top left
+        -0.5f,  -0.5f,  0.0f, // bottom left
+         0.0f,   0.5f,  0.0f, // top
+         0.5f,  -0.5f,  0.0f, // bottom right
     };
     constexpr unsigned int indices[] = {
-        // note that we start from 0!
-        0, 1, 3, // first Triangle
-        1, 2, 3, // second Triangle
+        0, 1, 2
     };
     // clang-format on
 
@@ -73,7 +70,7 @@ void core::Renderer::Render() const {
 
     // bind the array to be drawn and issue the draw call
     glBindVertexArray(m_vao);
-    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
+    glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, nullptr);
 }
 
 void core::Renderer::RenderDevUi() {
@@ -106,6 +103,6 @@ void core::Renderer::RenderDevUi() {
 
 void core::Renderer::HandleInput(const EventHandler& eventHandler) {
     if (eventHandler.IsKeyJustPressed(SDL_SCANCODE_U)) {
-       m_wireframeActive = !m_wireframeActive;
+        m_wireframeActive = !m_wireframeActive;
     }
 }

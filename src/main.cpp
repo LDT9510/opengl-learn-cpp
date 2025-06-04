@@ -4,14 +4,12 @@
 
 #include <SDL3/SDL.h>
 #include <dev_ui/dev_ui.h>
-#include <windows.h>
-#include <fmt/format.h>
-
-#include <string>
 
 int main() {
     auto window = core::Window::InitializeWithContext({
-        .title       = fmt::format("Learning OpenGL (PID: {})", std::to_string(GetCurrentProcessId())).c_str(),
+        .title       = "Learning OpenGL",
+        .width       = 800,
+        .height      = 600,
         .isResizable = false,
     });
 
