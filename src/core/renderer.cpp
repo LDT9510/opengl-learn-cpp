@@ -23,10 +23,11 @@ core::Renderer::~Renderer() {
 void core::Renderer::SetupRendering() const {
     // clang-format off
     constexpr float vertices[] = {
-        -0.5f,  -0.5f,  0.0f, // bottom left
-         0.0f,   0.5f,  0.0f, // top
-         0.5f,  -0.5f,  0.0f, // bottom right
-    };
+        // positions         // colors
+        0.5f, -0.5f, 0.0f,  1.0f, 0.0f, 0.0f,   // bottom right
+       -0.5f, -0.5f, 0.0f,  0.0f, 1.0f, 0.0f,   // bottom left
+        0.0f,  0.5f, 0.0f,  0.0f, 0.0f, 1.0f    // top
+   };
     constexpr unsigned int indices[] = {
         0, 1, 2
     };
@@ -41,8 +42,15 @@ void core::Renderer::SetupRendering() const {
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_ebo);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), nullptr);
+    // position attribute
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), nullptr);
     glEnableVertexAttribArray(0);
+
+    // color attribute
+    glVertexAttribPointer(
+        1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), reinterpret_cast<void*>(3 * sizeof(float))
+    );
+    glEnableVertexAttribArray(1);
 
     // note that this is allowed, the call to glVertexAttribPointer registered VBO as the vertex
     // attribute's bound vertex buffer object so afterward we can safely unbind
@@ -68,14 +76,6 @@ void core::Renderer::Render() const {
 
     // bind the shader program
     m_shader.Use();
-
-    // calculate the color based on time
-    float timeValue           = timing::GetSdlElapsedSeconds();
-    float greenValue          = (sin(timeValue) / 2.0f) + 0.5f;
-    int   vertexColorLocation = glGetUniformLocation(m_shader.GetProgram(), "ourColor");
-
-    // update the uniform
-    glUniform4f(vertexColorLocation, 0.0f, greenValue, 0.0f, 1.0f);
 
     // bind the array to be drawn and issue the draw call
     glBindVertexArray(m_vao);

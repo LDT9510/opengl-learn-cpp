@@ -61,9 +61,6 @@ void core::Shader::Use() const {
         SPDLOG_ERROR("Invalid shader");
     }
 }
-unsigned int core::Shader::GetProgram() const {
-    return m_programId;
-}
 
 // void mygl::Shader::SetBool(const char* name, const bool value) const {
 //     glUniform1i(glGetUniformLocation(m_programId, name), static_cast<int>(value));
