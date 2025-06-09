@@ -1,29 +1,40 @@
 #include "core/event_handler.h"
+#include "core/filesystem.h"
 #include "core/renderer.h"
 #include "core/window.h"
+#include "dev_ui/dev_ui.h"
+#include "utils/helper_macros.h"
 
 #include <SDL3/SDL.h>
-#include <dev_ui/dev_ui.h>
+#include <tracy/Tracy.hpp>
 
-int main() {
-    auto window = core::Window::InitializeWithContext({
-        .title       = "Learning OpenGL",
-        .width       = 800,
-        .height      = 600,
-        .isResizable = false,
+using namespace core;
+
+i32 main(M_UNUSED i32 argc, M_UNUSED char** argv) {
+    TracyNoop;
+
+    // TODO: only if debug
+    spdlog::set_level(spdlog::level::debug);
+
+    fs::Create(argv);
+
+    Window window = Window::InitializeWithContext({
+        .Title       = "Learning OpenGL",
+        .Width       = 800,
+        .Height      = 600,
+        .IsResizable = false,
     });
 
-    core::EventHandler eventHandler{{
-        .windowsResizingCallback = core::Window::OnWindowResizing,
-        .windowsQuitCallback     = [&window]() { window.OnWindowQuitEvent(); },
+    EventHandler eventHandler{{
+        .WindowsResizingCallback = Window::OnWindowResizing,
+        .WindowsQuitCallback     = [&window]() { window.OnWindowQuitEvent(); },
     }};
 
     // requires an initialized OpenGL context
-    core::Renderer renderer;
+    Renderer renderer;
     renderer.SetupRendering();
 
-    eventHandler.RegisterKeyboardInputHandler([&renderer,
-                                               &window](const core::EventHandler& handler) {
+    eventHandler.RegisterKeyboardInputHandler([&renderer, &window](const EventHandler& handler) {
         renderer.HandleInput(handler);
         window.HandleInput(handler);
     });
@@ -31,19 +42,23 @@ int main() {
     while (window.ShouldStayOpen()) {
         dev_ui::CreateFrame();
 
-        eventHandler.CollectAndProcessInput();
+        eventHandler.CollectInput();
+
+        eventHandler.ProcessInput();
 
         renderer.Render();
 
-        core::Renderer::RenderDevUi();
+        renderer.PrepareDevUi();
 
         dev_ui::RenderFrame();
 
-        window.GlSwap();
+        window.Gl_Swap();
     }
 
     SDL_Quit();
     dev_ui::Shutdown();
+
+    fs::Destroy();
 
     return 0;
 }

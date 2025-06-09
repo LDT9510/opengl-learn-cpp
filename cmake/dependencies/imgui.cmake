@@ -1,11 +1,11 @@
 include("Utils")
 include("ExternalsUtils")
 
-function(configure_external_imgui target)
-    set(LIB_NAME "imgui")
-    announce("Configuring \"${LIB_NAME}\" external library.")
+block()
+    set(lib_name "imgui")
+    Announce("Configuring \"${lib_name}\" external library.")
 
-    force_bool(IMGUI_DEMO ON)  # Build the demo window
+    ForceBool(IMGUI_DEMO ON)  # Build the demo window
 
-    add_external_subdirectory(${LIB_NAME})
-endfunction()
+    AddExternalSubdirectory(${lib_name})
+endblock()

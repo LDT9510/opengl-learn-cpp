@@ -1,2 +1,2 @@
-option(ASSERTIONS_IN_RELEASE "Activate assertions when in Release mode" OFF)
-option(DISABLE_LOGGING "Disable the logging" OFF)
+# Put global options here
+# option(TOGGLE_FEATURE "Cool feature on/off" OFF)

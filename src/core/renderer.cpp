@@ -1,117 +1,190 @@
 #include "core/renderer.h"
 
 #include "core/event_handler.h"
-#include "core/timing.h"
+#include "core/filesystem.h"
 
-#include <dev_ui/dev_ui.h>
 #include <glad/gl.h>
+#include <imgui/imgui.h>
+#include <spdlog/spdlog.h>
+#include <stb/stb_image.h>
 
-core::Renderer::Renderer() { // NOLINT(*-pro-type-member-init)
-    // generate the buffers and get back a handle to them
-    glGenVertexArrays(1, &m_vao);
-    glGenBuffers(1, &m_vbo);
-    glGenBuffers(1, &m_ebo);
-}
+namespace core
+{
+    Renderer::Renderer() :
+        m_Shader{CoreShaderFile("vertex_shader.vert"), CoreShaderFile("fragment_shader.frag")}
+    {
+        // generate the buffers and get back a handle to them
+        glGenVertexArrays(1, &m_Vao);
+        glGenBuffers(1, &m_Vbo);
+        glGenBuffers(1, &m_Ebo);
+        glGenTextures(1, &m_Texture);
+    }
 
-core::Renderer::~Renderer() {
-    // cleanup
-    glDeleteVertexArrays(1, &m_vao);
-    glDeleteBuffers(1, &m_vbo);
-    glDeleteBuffers(1, &m_ebo);
-}
+    Renderer::~Renderer()
+    {
+        // cleanup
+        glDeleteVertexArrays(1, &m_Vao);
+        glDeleteBuffers(1, &m_Vbo);
+        glDeleteBuffers(1, &m_Ebo);
+        glDeleteTextures(1, &m_Texture);
+    }
 
-void core::Renderer::SetupRendering() const {
-    // clang-format off
-    constexpr float vertices[] = {
-        // positions         // colors
-        0.5f, -0.5f, 0.0f,  1.0f, 0.0f, 0.0f,   // bottom right
-       -0.5f, -0.5f, 0.0f,  0.0f, 1.0f, 0.0f,   // bottom left
-        0.0f,  0.5f, 0.0f,  0.0f, 0.0f, 1.0f    // top
-   };
-    constexpr unsigned int indices[] = {
-        0, 1, 2
-    };
-    // clang-format on
+    void Renderer::SetupRendering() const
+    {
+        // clang-format off
+        static constexpr f32 vertices[] = {
+            // positions         // colors        // texture coordinates
+            0.5f, -0.5f, 0.0f,  1.0f, 0.0f, 0.0f,  0.0f, 0.0f,     // bottom right
+           -0.5f, -0.5f, 0.0f,  0.0f, 1.0f, 0.0f,  1.0f, 0.0f,     // bottom left
+            0.0f,  0.5f, 0.0f,  0.0f, 0.0f, 1.0f,  0.5f, 1.0f      // top
+       };
 
-    // bind the Vertex Array Object first, then bind and set vertex buffer(s), and then configure
-    // vertex attributes(s).
-    glBindVertexArray(m_vao);
-    glBindBuffer(GL_ARRAY_BUFFER, m_vbo);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+        static constexpr u32 indices[] = {
+            0, 1, 2
+        };
+        // clang-format on
 
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_ebo);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+        // bind the Vertex Array Object first, then bind and set vertex buffer(s), and then
+        // configure vertex attributes(s).
+        glBindVertexArray(m_Vao);
+        glBindBuffer(GL_ARRAY_BUFFER, m_Vbo);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
-    // position attribute
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), nullptr);
-    glEnableVertexAttribArray(0);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_Ebo);
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 
-    // color attribute
-    glVertexAttribPointer(
-        1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), reinterpret_cast<void*>(3 * sizeof(float))
-    );
-    glEnableVertexAttribArray(1);
+        // position attribute
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(f32), nullptr);
+        glEnableVertexAttribArray(0);
 
-    // note that this is allowed, the call to glVertexAttribPointer registered VBO as the vertex
-    // attribute's bound vertex buffer object so afterward we can safely unbind
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
+        // color attribute
+        glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(f32), reinterpret_cast<void*>(3 * sizeof(f32)));
+        glEnableVertexAttribArray(1);
 
-    // remember: do NOT unbind the EBO while a VAO is active as the bound element buffer object IS
-    // stored in the VAO; keep the EBO bound.
-    // glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+        // texture coordinates attribute
+        glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(f32), reinterpret_cast<void*>(6 * sizeof(f32)));
+        glEnableVertexAttribArray(2);
 
-    // You can unbind the VAO afterward so other VAO calls won't accidentally modify this VAO, but
-    // this rarely happens. Modifying other VAOs requires a call to glBindVertexArray anyway so we
-    // generally don't unbind VAOs (nor VBOs) when it's not directly necessary.
-    glBindVertexArray(0);
+        // note that this is allowed, the call to glVertexAttribPointer registered VBO as the vertex
+        // attribute's bound vertex buffer object so afterward we can safely unbind
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
 
-    glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-}
+        // remember: do NOT unbind the EBO while a VAO is active as the bound element buffer object
+        // IS stored in the VAO; keep the EBO bound. glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
-void core::Renderer::Render() const {
-    glPolygonMode(GL_FRONT_AND_BACK, m_wireframeActive ? GL_LINE : GL_FILL);
+        // You can unbind the VAO afterward so other VAO calls won't accidentally modify this VAO,
+        // but this rarely happens. Modifying other VAOs requires a call to glBindVertexArray anyway
+        // so we generally don't unbind VAOs (nor VBOs) when it's not directly necessary.
+        glBindVertexArray(0);
 
-    // clear the background
-    glClear(GL_COLOR_BUFFER_BIT);
+        // load texture from image
+        // load and generate the texture
+        int            width, height, nrChannels;
+        auto           imageContents = fs::Instance().ReadFile<std::vector<u8>>(TextureFile("wall.jpg"));
+        unsigned char* data          = stbi_load_from_memory(
+            imageContents.data(), static_cast<i32>(imageContents.size()), &width, &height, &nrChannels, 0
+        );
+        if (data)
+        {
+            // load texture data and configure
+            glBindTexture(GL_TEXTURE_2D, m_Texture);
+            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+            glGenerateMipmap(GL_TEXTURE_2D);
+            // set the texture wrapping/filtering options (on the currently bound texture object)
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-    // bind the shader program
-    m_shader.Use();
+            static constexpr f32 borderColor[] = {1.0f, 1.0f, 0.0f, 1.0f};
+            glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);
+            stbi_image_free(data);
+        }
+        else
+        {
+            SPDLOG_ERROR("Failed to load texture");
+        }
 
-    // bind the array to be drawn and issue the draw call
-    glBindVertexArray(m_vao);
-    glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, nullptr);
-}
+        glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+    }
 
-void core::Renderer::RenderDevUi() {
-    using namespace dev_ui;
+    void Renderer::Render() const
+    {
+        glPolygonMode(GL_FRONT_AND_BACK, m_IsWireframeActive ? GL_LINE : GL_FILL);
 
-    im::Begin("Learning OpenGL");
+        // clear the background
+        glClear(GL_COLOR_BUFFER_BIT);
 
-    if (im::CollapsingHeader("Global Shortcuts")) {
-        static constexpr ImGuiTableFlags tableFlags =
-            ImGuiTableFlags_RowBg | ImGuiTableFlags_Borders;
-        static constexpr auto yellow = ImVec4(1.0f, 1.0f, 0.0f, 1.0f);
-        if (im::BeginTable("shortcuts", 2, tableFlags)) {
-            im::TableSetupColumn("Shortcut", ImGuiTableColumnFlags_WidthFixed);
-            im::TableSetupColumn("Description", ImGuiTableColumnFlags_WidthFixed);
-            im::TableHeadersRow();
-            im::TableNextRow();
-            im::TableNextColumn();
-            im::Indent();
+        // bind the shader program
+        m_Shader.Use();
+
+        // bind the array to be drawn and issue the draw call
+        glBindTexture(GL_TEXTURE_2D, m_Texture);
+        glBindVertexArray(m_Vao);
+        glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, nullptr);
+    }
+
+    void Renderer::PrepareDevUi()
+    {
+        ImGui::Begin("Learning OpenGL");
+
+        if (ImGui::CollapsingHeader("Global Shortcuts"))
+        {
+            static constexpr ImGuiTableFlags tableFlags = ImGuiTableFlags_RowBg | ImGuiTableFlags_Borders;
+            static constexpr auto            yellow     = ImVec4(1.0f, 1.0f, 0.0f, 1.0f);
+            if (ImGui::BeginTable("shortcuts", 2, tableFlags))
             {
-                im::TextColored(yellow, "U");
-                im::TableNextColumn();
-                im::Text("Enables wireframe mode");
+                ImGui::TableSetupColumn("Shortcut", ImGuiTableColumnFlags_WidthFixed);
+                ImGui::TableSetupColumn("Description", ImGuiTableColumnFlags_WidthFixed);
+                ImGui::TableHeadersRow();
+                ImGui::TableNextRow();
+                ImGui::TableNextColumn();
+                ImGui::Indent();
+                {
+                    ImGui::TextColored(yellow, "U");
+                    ImGui::TableNextColumn();
+                    ImGui::Text("Enables wireframe mode");
+                }
+                ImGui::EndTable();
             }
-            im::EndTable();
+        }
+
+        if (ImGui::Button("Reload shaders"))
+        {
+            if (!m_IsShaderReloading)
+            {
+                if (ReloadShaders())
+                {
+                    SPDLOG_INFO("All Shaders reloaded OK.");
+                }
+                else
+                {
+                    SPDLOG_ERROR("Error reloading shaders.");
+                }
+            }
+            else
+            {
+                SPDLOG_INFO("Already compiling, please wait...");
+            }
+        }
+
+        ImGui::End();
+    }
+
+    void Renderer::HandleInput(const EventHandler& eventHandler)
+    {
+        if (eventHandler.IsKeyJustPressed(SDLK_U))
+        {
+            m_IsWireframeActive = !m_IsWireframeActive;
         }
     }
 
-    im::End();
-}
+    b8 Renderer::ReloadShaders()
+    {
+        m_IsShaderReloading = true;
+        m_Shader            = {CoreShaderFile("vertex_shader.vert"), CoreShaderFile("fragment_shader.frag")};
+        m_IsShaderReloading = false;
 
-void core::Renderer::HandleInput(const EventHandler& eventHandler) {
-    if (eventHandler.IsKeyJustPressed(SDL_SCANCODE_U)) {
-        m_wireframeActive = !m_wireframeActive;
+        return m_Shader.IsValid();
     }
-}
+} // namespace core

@@ -4,5 +4,5 @@
 # ignore JetBrains IDE fodlers
 /.idea
 
-# ignore compilation database files, there should be generated
+# ignore compilation database files
 /compilation_database.json

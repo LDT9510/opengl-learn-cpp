@@ -1,7 +1,11 @@
-#include "core/timing.h"
+#include "timing.h"
 
 #include <SDL3/SDL.h>
 
-float core::timing::GetSdlElapsedSeconds() {
-    return static_cast<float>(SDL_GetTicks()) / 1000.f;
-}
+namespace core
+{
+    f32 timing::GetSdlElapsedSeconds()
+    {
+        return static_cast<f32>(SDL_GetTicks()) / 1000.f;
+    }
+} // namespace core

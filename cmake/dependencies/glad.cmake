@@ -1,9 +1,9 @@
 include("Utils")
 include("ExternalsUtils")
 
-function(configure_external_glad)
-    set(LIB_NAME "glad")
-    announce("Configuring \"${LIB_NAME}\" external library.")
+block()
+    set(lib_name "glad")
+    Announce("Configuring \"${lib_name}\" external library.")
 
-    add_external_subdirectory(${LIB_NAME})
-endfunction()
+    AddExternalSubdirectory(${lib_name})
+endblock()
