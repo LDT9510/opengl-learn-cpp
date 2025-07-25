@@ -10,7 +10,8 @@
 
 using namespace core;
 
-i32 main(M_UNUSED i32 argc, M_UNUSED char** argv) {
+i32 main(M_UNUSED i32 argc, M_UNUSED char** argv)
+{
     TracyNoop;
 
     // TODO: only if debug
@@ -34,12 +35,16 @@ i32 main(M_UNUSED i32 argc, M_UNUSED char** argv) {
     Renderer renderer;
     renderer.SetupRendering();
 
-    eventHandler.RegisterKeyboardInputHandler([&renderer, &window](const EventHandler& handler) {
-        renderer.HandleInput(handler);
-        window.HandleInput(handler);
-    });
+    eventHandler.RegisterKeyboardInputHandler(
+        [&renderer, &window](const EventHandler& handler)
+        {
+            renderer.HandleInput(handler);
+            window.HandleInput(handler);
+        }
+    );
 
-    while (window.ShouldStayOpen()) {
+    while (window.ShouldStayOpen())
+    {
         dev_ui::CreateFrame();
 
         eventHandler.CollectInput();

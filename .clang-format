@@ -1,5 +1,5 @@
 # For C and C++
-BasedOnStyle: LLVM
+BasedOnStyle: Microsoft
 AccessModifierOffset: -4
 AlignConsecutiveAssignments:
   Enabled: true
@@ -18,8 +18,8 @@ AlignAfterOpenBracket: BlockIndent
 AlignEscapedNewlines: Left
 AllowAllParametersOfDeclarationOnNextLine: true
 AllowShortBlocksOnASingleLine: Empty
-AllowShortCaseLabelsOnASingleLine: true
-AllowShortFunctionsOnASingleLine: InlineOnly
+AllowShortCaseLabelsOnASingleLine: false
+AllowShortFunctionsOnASingleLine: None
 AllowShortIfStatementsOnASingleLine: true
 AllowShortLoopsOnASingleLine: true
 AllowShortLambdasOnASingleLine: Inline
@@ -27,17 +27,17 @@ AlwaysBreakAfterDefinitionReturnType: None
 AlwaysBreakAfterReturnType: None
 AlwaysBreakBeforeMultilineStrings: true
 AlwaysBreakTemplateDeclarations: Yes
-LambdaBodyIndentation: OuterScope
+LambdaBodyIndentation: Signature
 BinPackArguments: false
 BinPackParameters: false
-BreakBeforeBraces: Attach
+BreakBeforeBraces: Allman
 BreakConstructorInitializers: AfterColon
 BreakConstructorInitializersBeforeComma: false
 BreakBeforeBinaryOperators: NonAssignment
 BreakBeforeInheritanceComma: true
 BreakBeforeTernaryOperators: true
 BreakStringLiterals: true
-ColumnLimit: 100
+ColumnLimit: 120
 ConstructorInitializerAllOnOneLineOrOnePerLine: false
 ContinuationIndentWidth: 4
 Cpp11BracedListStyle: true
@@ -49,11 +49,11 @@ IncludeCategories:
   # then main application (use quotes)
   - Regex: '^".*\.h"'
     Priority: 1
-  # then external library headers (should use the "thirdparty" include convention)
-  - Regex: '^<thirdparty/.*\.h>'
+  # then external library headers 
+  - Regex: '^<((fmt|glad|glm|imgui|SDL3|spdlog|tracy|stb)/.*)|physfs(_*)?.h>'
     Priority: 2
   # then system headers, standard or compiler specific
-  - Regex: '^<.*'
+  - Regex: '^<([a-z_]+)(\.h)?>'
     Priority: 3
   # then anything else
   - Regex: '.*'
@@ -66,7 +66,7 @@ KeepEmptyLinesAtTheStartOfBlocks: false
 MacroBlockBegin: ''
 MacroBlockEnd: ''
 MaxEmptyLinesToKeep: 2
-NamespaceIndentation: Inner
+NamespaceIndentation: All
 PenaltyReturnTypeOnItsOwnLine: 1000
 PackConstructorInitializers: NextLineOnly
 PointerAlignment: Left

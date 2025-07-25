@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../utils/types.h"
+#include "core/types.h"
 #include "utils/singleton.h"
 
 #include <fmt/format.h>

@@ -4,7 +4,6 @@
 
 #include <spdlog/spdlog.h>
 
-#include <memory>
 #include <string>
 
 namespace core

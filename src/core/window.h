@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../utils/types.h"
+#include "core/types.h"
 
 #include <SDL3/SDL.h>
 
@@ -9,8 +9,8 @@
 
 namespace core
 {
-    static constexpr i32 DEFAULT_WINDOW_WIDTH    = 1280;
-    static constexpr i32 DEFAULT_WINDOW_HEIGHT   = 800;
+    static constexpr i32 DEFAULT_WINDOW_WIDTH     = 1280;
+    static constexpr i32 DEFAULT_WINDOW_HEIGHT    = 800;
     static constexpr i32 DEFAULT_GL_MAJOR_VERSION = 3;
     static constexpr i32 DEFAULT_GL_MINOR_VERSION = 3;
 
@@ -39,12 +39,12 @@ namespace core
 
         struct Config
         {
-            std::string Title          = "OpenGL App";
-            i32         Width          = DEFAULT_WINDOW_WIDTH;
-            i32         Height         = DEFAULT_WINDOW_HEIGHT;
+            std::string Title           = "OpenGL App";
+            i32         Width           = DEFAULT_WINDOW_WIDTH;
+            i32         Height          = DEFAULT_WINDOW_HEIGHT;
             i32         Gl_MajorVersion = DEFAULT_GL_MAJOR_VERSION;
             i32         Gl_MinorVersion = DEFAULT_GL_MINOR_VERSION;
-            b8          IsResizable    = true;
+            b8          IsResizable     = true;
         };
 
         static Window InitializeWithContext(const Config& config);
@@ -58,13 +58,12 @@ namespace core
 
     private:
         explicit Window(SDL_Window* window, SDL_GLContext context) noexcept :
-            m_Window{window},
-            m_Gl_Context{context}
+            m_Window{window}, m_Gl_Context{context}
         {
         }
 
         SdlWindowPtr    m_Window      = nullptr;
-        SdlGlContextPtr m_Gl_Context   = nullptr;
+        SdlGlContextPtr m_Gl_Context  = nullptr;
         b8              m_ShouldClose = false;
     };
 } // namespace core

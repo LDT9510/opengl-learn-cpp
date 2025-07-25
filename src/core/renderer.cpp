@@ -6,6 +6,7 @@
 #include <glad/gl.h>
 #include <imgui/imgui.h>
 #include <spdlog/spdlog.h>
+
 #include <stb/stb_image.h>
 
 namespace core

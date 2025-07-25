@@ -21,7 +21,8 @@
  */
 #define CHECK_F(expr, msg, ...)      \
     do {                             \
-        if (!(expr)) {               \
+        if (!(expr))                 \
+        {                            \
             CRASH(msg, __VA_ARGS__); \
         }                            \
     } while (0)
