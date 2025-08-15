@@ -9,61 +9,56 @@
 
 namespace core
 {
-    static constexpr i32 DEFAULT_WINDOW_WIDTH     = 1280;
-    static constexpr i32 DEFAULT_WINDOW_HEIGHT    = 800;
-    static constexpr i32 DEFAULT_GL_MAJOR_VERSION = 3;
-    static constexpr i32 DEFAULT_GL_MINOR_VERSION = 3;
 
-    class EventHandler;
+class event_handler;
 
-    class Window
-    {
-        class SdlWindowDeleter
-        {
-        public:
-            void operator()(SDL_Window* sdlWindowHandle) const;
-        };
+class window {
+	class sdl_window_deleter {
+	    public:
+		void operator()(SDL_Window *sdl_window_handle) const;
+	};
 
-        class SdlContextDeleter
-        {
-        public:
-            void operator()(SDL_GLContext sdlGlContextHandle) const;
-        };
+	class sdl_context_deleter {
+	    public:
+		void operator()(SDL_GLContext sdl_gl_context_handle) const;
+	};
 
     public:
-        static constexpr i32 SCREEN_WIDTH  = 800;
-        static constexpr i32 SCREEN_HEIGHT = 600;
+	static constexpr i32 DEFAULT_WINDOW_WIDTH = 1280;
+	static constexpr i32 DEFAULT_WINDOW_HEIGHT = 800;
+	static constexpr i32 DEFAULT_GL_MAJOR_VERSION = 3;
+	static constexpr i32 DEFAULT_GL_MINOR_VERSION = 3;
 
-        using SdlWindowPtr    = std::unique_ptr<SDL_Window, SdlWindowDeleter>;
-        using SdlGlContextPtr = std::unique_ptr<SDL_GLContextState, SdlContextDeleter>;
+	using sdl_window_ptr_t = std::unique_ptr<SDL_Window, sdl_window_deleter>;
+	using sdl_gl_context_ptr_t = std::unique_ptr<SDL_GLContextState, sdl_context_deleter>;
 
-        struct Config
-        {
-            std::string Title           = "OpenGL App";
-            i32         Width           = DEFAULT_WINDOW_WIDTH;
-            i32         Height          = DEFAULT_WINDOW_HEIGHT;
-            i32         Gl_MajorVersion = DEFAULT_GL_MAJOR_VERSION;
-            i32         Gl_MinorVersion = DEFAULT_GL_MINOR_VERSION;
-            b8          IsResizable     = true;
-        };
+	struct config {
+		std::string title = "OpenGL App";
+		i32         width = DEFAULT_WINDOW_WIDTH;
+		i32         h = DEFAULT_WINDOW_HEIGHT;
+		i32         gl_major_version = DEFAULT_GL_MAJOR_VERSION;
+		i32         gl_minor_version = DEFAULT_GL_MINOR_VERSION;
+		b8          is_resizable = true;
+	};
 
-        static Window InitializeWithContext(const Config& config);
-        static void   OnWindowResizing(i32 newSizeX, i32 newSizeY);
-        b8            ShouldStayOpen() const;
-        void          Gl_Swap() const;
-        void          OnWindowQuitEvent();
-        void          HandleInput(const EventHandler& eventHandler);
-        SDL_Window*   GetWindowHandle() const;
-        SDL_GLContext GetGlContext() const;
+	static window initialize_with_context(const config &config);
+	static void   on_window_resizing(i32 new_size_x, i32 new_size_y);
+	b8            should_stay_open() const;
+	void          gl_swap() const;
+	void          on_window_quit_event();
+	void          handle_input(const event_handler &event_handler);
+	SDL_Window   *get_window_handle() const;
+	SDL_GLContext get_gl_context() const;
 
     private:
-        explicit Window(SDL_Window* window, SDL_GLContext context) noexcept :
-            m_Window{window}, m_Gl_Context{context}
-        {
-        }
+	explicit window(SDL_Window *window, SDL_GLContext context) noexcept
+	        : m_window{ window }
+	        , m_gl_context{ context }
+	{
+	}
 
-        SdlWindowPtr    m_Window      = nullptr;
-        SdlGlContextPtr m_Gl_Context  = nullptr;
-        b8              m_ShouldClose = false;
-    };
+	sdl_window_ptr_t     m_window = nullptr;
+	sdl_gl_context_ptr_t m_gl_context = nullptr;
+	b8                   m_should_close = false;
+};
 } // namespace core

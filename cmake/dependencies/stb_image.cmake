@@ -2,8 +2,8 @@ include("Utils")
 include("ExternalsUtils")
 
 block()
-    set(lib_name "stb_image")
-    Announce("Configuring \"${lib_name}\" external library.")
+    set(LIB_NAME "stb_image")
+    announce("Configuring \"${LIB_NAME}\" external library.")
 
-    AddExternalSubdirectory(${lib_name})
+    add_external_subdirectory(${LIB_NAME})
 endblock()

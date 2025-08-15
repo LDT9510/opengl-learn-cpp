@@ -10,58 +10,57 @@
 
 namespace core
 {
-    class EventHandler
-    {
-        using MouseOffsetCallback          = std::function<void(f32 xOffset, f32 yOffset)>;
-        using MouseWheelDirectionCallback  = std::function<void(f32 mouseWheelDirection)>;
-        using WindowsResizingCallback      = std::function<void(i32 newSizeX, i32 mewSizeY)>;
-        using WindowsQuitCallback          = std::function<void()>;
-        using KeyboardInputHandlerCallback = std::function<void(const EventHandler& eventHandler)>;
+class event_handler {
+	using mouse_offset_fn_t = std::function<void(f32 x_offset, f32 y_offset)>;
+	using mouse_wheel_direction_fn_t = std::function<void(f32 mouse_wheel_direction)>;
+	using windows_resizing_fn_t = std::function<void(i32 new_size_x, i32 mew_size_y)>;
+	using windows_quit_fn_t = std::function<void()>;
+	using keyboard_input_handler_fn_t = std::function<void(const event_handler &evh)>;
 
     public:
-        struct Config
-        {
-            WindowsResizingCallback WindowsResizingCallback;
-            WindowsQuitCallback     WindowsQuitCallback;
-        };
+	struct config {
+		windows_resizing_fn_t windows_resizing_callback;
+		windows_quit_fn_t     windows_quit_callback;
+	};
 
-        explicit EventHandler(Config config);
+	explicit event_handler(config config);
+	~event_handler() = default;
 
-        EventHandler(const EventHandler& other)                = delete;
-        EventHandler& operator=(const EventHandler& other)     = delete;
-        EventHandler(EventHandler&& other) noexcept            = default;
-        EventHandler& operator=(EventHandler&& other) noexcept = default;
+	event_handler(const event_handler &other) = delete;
+	event_handler &operator=(const event_handler &other) = delete;
+	event_handler(event_handler &&other) noexcept = default;
+	event_handler &operator=(event_handler &&other) noexcept = default;
 
-        void RegisterMouseOffsetCallback(const MouseOffsetCallback& callback)
-        {
-            m_MouseOffsetCallBack = callback;
-        }
+	void           register_mouse_offset_callback(const mouse_offset_fn_t &callback)
+	{
+		m_mouse_offset_fn = callback;
+	}
 
-        void RegisterMouseWheelDirectionCallback(const MouseWheelDirectionCallback& callback)
-        {
-            m_MouseWheelDirectionCallback = callback;
-        }
+	void register_mouse_wheel_direction_callback(const mouse_wheel_direction_fn_t &callback)
+	{
+		m_mouse_wheel_direction_fn = callback;
+	}
 
-        void RegisterKeyboardInputHandler(const KeyboardInputHandlerCallback& callback)
-        {
-            m_KeyboardInputHandlerCallback = callback;
-        }
+	void register_keyboard_input_handler(const keyboard_input_handler_fn_t &callback)
+	{
+		m_keyboard_input_handler_fn = callback;
+	}
 
-        void ClearOptionalCallbacks();
-        void CollectInput();
-        void ProcessInput() const;
-        b8   IsKeyPressed(SDL_Keycode keyCode) const;
-        b8   IsKeyReleased(SDL_Keycode keyCode) const;
-        b8   IsKeyJustPressed(SDL_Keycode keyCode) const;
+	void clear_optional_callbacks();
+	void collect_input();
+	void process_input() const;
+	b8   is_key_pressed(SDL_Keycode key_code) const;
+	b8   is_key_released(SDL_Keycode key_code) const;
+	b8   is_key_just_pressed(SDL_Keycode key_code) const;
 
     private:
-        std::array<b8, SDL_SCANCODE_COUNT>          m_CurrentKeyboardState{};
-        std::array<b8, SDL_SCANCODE_COUNT>          m_LastKeyboardState{};
-        b8                                          m_KeyboardInputAvailable{};
-        WindowsResizingCallback                     m_WindowResizingCallback;
-        WindowsQuitCallback                         m_WindowQuitCallback;
-        std::optional<KeyboardInputHandlerCallback> m_KeyboardInputHandlerCallback;
-        std::optional<MouseOffsetCallback>          m_MouseOffsetCallBack;
-        std::optional<MouseWheelDirectionCallback>  m_MouseWheelDirectionCallback;
-    };
+	std::array<b8, SDL_SCANCODE_COUNT>         m_current_keyboard_state{};
+	std::array<b8, SDL_SCANCODE_COUNT>         m_last_keyboard_state{};
+	b8                                         m_keyboard_input_available{};
+	windows_resizing_fn_t                      m_window_resizing_fn;
+	windows_quit_fn_t                          m_window_quit_fn;
+	std::optional<keyboard_input_handler_fn_t> m_keyboard_input_handler_fn;
+	std::optional<mouse_offset_fn_t>           m_mouse_offset_fn;
+	std::optional<mouse_wheel_direction_fn_t>  m_mouse_wheel_direction_fn;
+};
 } // namespace core

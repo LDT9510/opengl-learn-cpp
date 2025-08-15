@@ -2,12 +2,12 @@ include("Utils")
 include("ExternalsUtils")
 
 block()
-    set(lib_name "imgui")
-    Announce("Configuring \"${lib_name}\" external library.")
+    set(LIB_NAME "imgui")
+    announce("Configuring \"${LIB_NAME}\" external library.")
 
-    ForceBool(IMGUI_DEMO ON)  # Build the demo window
+    force_bool(IMGUI_DEMO ON)  # Build the demo window
 
-    AddExternalSubdirectory(${lib_name})
+    add_external_subdirectory(${LIB_NAME})
     
     if (TARGET_PLATFORM_IS_WINDOWS AND CXX_COMPILER_IS_GNU_LIKE)
         # fix CLang on Windows

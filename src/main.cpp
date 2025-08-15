@@ -10,60 +10,49 @@
 
 using namespace core;
 
-i32 main(M_UNUSED i32 argc, M_UNUSED char** argv)
+i32 main(M_UNUSED i32 argc, M_UNUSED char **argv) //
 {
-    TracyNoop;
+	TracyNoop;
 
-    // TODO: only if debug
-    spdlog::set_level(spdlog::level::debug);
+	// TODO: only if debug
+	spdlog::set_level(spdlog::level::debug);
 
-    fs::Create(argv);
+	fs::create(argv);
 
-    Window window = Window::InitializeWithContext({
-        .Title       = "Learning OpenGL",
-        .Width       = 800,
-        .Height      = 600,
-        .IsResizable = false,
-    });
+	window wnd = window::initialize_with_context({
+	        .title = "Learning OpenGL",
+	        .width = 800,
+	        .h = 600,
+	        .is_resizable = false,
+	});
 
-    EventHandler eventHandler{{
-        .WindowsResizingCallback = Window::OnWindowResizing,
-        .WindowsQuitCallback     = [&window]() { window.OnWindowQuitEvent(); },
-    }};
+	event_handler evh{ {
+		.windows_resizing_callback = window::on_window_resizing,
+		.windows_quit_callback = [&wnd]() { wnd.on_window_quit_event(); },
+	} };
 
-    // requires an initialized OpenGL context
-    Renderer renderer;
-    renderer.SetupRendering();
+	// requires an initialized OpenGL context
+	renderer rendr;
+	rendr.setup_rendering();
 
-    eventHandler.RegisterKeyboardInputHandler(
-        [&renderer, &window](const EventHandler& handler)
-        {
-            renderer.HandleInput(handler);
-            window.HandleInput(handler);
-        }
-    );
+	evh.register_keyboard_input_handler([&rendr, &wnd](const event_handler &handler) {
+		rendr.handle_input(handler);
+		wnd.handle_input(handler);
+	});
 
-    while (window.ShouldStayOpen())
-    {
-        dev_ui::CreateFrame();
+	while (wnd.should_stay_open()) {
+		dev_ui::create_frame();
+		evh.collect_input();
+		evh.process_input();
+		rendr.render();
+		rendr.prepare_dev_ui();
+		dev_ui::render_frame();
+		wnd.gl_swap();
+	}
 
-        eventHandler.CollectInput();
+	SDL_Quit();
+	dev_ui::shutdown();
+	fs::destroy();
 
-        eventHandler.ProcessInput();
-
-        renderer.Render();
-
-        renderer.PrepareDevUi();
-
-        dev_ui::RenderFrame();
-
-        window.Gl_Swap();
-    }
-
-    SDL_Quit();
-    dev_ui::Shutdown();
-
-    fs::Destroy();
-
-    return 0;
+	return 0;
 }

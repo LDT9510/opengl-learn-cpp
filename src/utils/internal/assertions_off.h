@@ -4,31 +4,31 @@
 #include "utils/helper_macros.h"
 
 /** Does nothing. Expression is not evaluated. */
-#define CRASH(format, ...) NOOP
+#define crash(format, ...) NOOP
 
 /** Does nothing. Expression is not evaluated. */
-#define CHECK_F(expr, msg, ...) NOOP
+#define check_f(expr, msg, ...) NOOP
 
 /** Does nothing. Expression is not evaluated. */
-#define CHECK(expr) NOOP
-
-/** Does nothing. Expression is not evaluated. */
-#define CHECK_NOT_NULL(pointer) NOOP
+#define check(expr) NOOP
 
 /** Assumes that this line of code can never be reached
  * for optimization purposes. If reached undefined behaviours occurs,
  * use with caution.
  */
-#define CHECK_UNREACHABLE() Unreachable()
+#define check_unreachable() unreachable()
 
 /** Does nothing. Expression is not evaluated. */
-#define CHECK_CODE_BLOCK(codeBlock) NOOP
+#define check_not_null(pointer) NOOP
+
+/** Does nothing. Expression is not evaluated. */
+#define check_code_block(codeBlock) NOOP
 
 /** Does nothing. Expression is always evaluated. */
-#define VERIFY_F(expr, msg, ...) expr
+#define verify_f(expr, msg, ...) expr
 
 /** Does nothing. Expression is always evaluated. */
-#define VERIFY(expr) VERIFY_F(expr, "") expr
+#define verify(expr) VERIFY_F(expr, "") expr
 
 /** Does nothing. Expression is always evaluated. */
-#define VERIFY_NOT_NULL(pointer) VERIFY_F(pointer, "")
+#define verify_not_null(pointer) VERIFY_F(pointer, "")

@@ -4,5 +4,5 @@
 
 namespace core::timing
 {
-    f32 GetSdlElapsedSeconds();
+f32 get_sdl_elapsed_seconds();
 } // namespace core::timing

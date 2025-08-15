@@ -6,57 +6,59 @@
 
 namespace core
 {
-    class Shader
-    {
+class shader {
     public:
-        Shader() = default;
-        Shader(const CoreShaderFile& vertexFileName, const CoreShaderFile& fragmentFileName);
-        Shader(const std::string& vertexCode, const std::string& fragmentCode);
-        ~Shader();
+	shader() = default;
+	shader(const core_shader_file_t &vertex_file_name,
+	       const core_shader_file_t &fragment_file_name);
+	shader(const std::string &vertex_code, const std::string &fragment_code);
+	~shader();
 
-        Shader(const Shader& other)            = delete;
-        Shader& operator=(const Shader& other) = delete;
+	shader(const shader &other) = delete;
+	shader &operator=(const shader &other) = delete;
 
-        Shader(Shader&& other) noexcept
-        {
-            *this = std::move(other);
-        }
+	shader(shader &&other) noexcept
+	{
+		*this = std::move(other);
+	}
 
-        Shader& operator=(Shader&& other) noexcept
-        {
-            if (this == &other) return *this;
-            m_ProgramId = other.m_ProgramId;
-            m_IsValid   = other.m_IsValid;
+	shader &operator=(shader &&other) noexcept
+	{
+		if (this == &other) {
+			return *this;
+		}
+		m_program_id = other.m_program_id;
+		m_is_valid = other.m_is_valid;
 
-            // when moved, reset "other" program ID so that its destructor
-            // don't destroy the program
-            other.m_ProgramId = 0;
+		// when moved, reset "other" program ID so that its destructor
+		// don't destroy the program
+		other.m_program_id = 0;
 
-            return *this;
-        }
+		return *this;
+	}
 
-        b8 IsValid() const
-        {
-            return m_IsValid;
-        };
+	b8 is_valid() const
+	{
+		return m_is_valid;
+	};
 
-        void Use() const;
-        void SetBool(const std::string& name, b8 value) const;
-        void SetInt32(const std::string& name, i32 value) const;
-        void SetFloat(const std::string& name, f32 value) const;
-        void SetVec2(const std::string& name, const glm::vec2& value) const;
-        void SetVec2(const std::string& name, f32 x, f32 y) const;
-        void SetVec3(const std::string& name, const glm::vec3& value) const;
-        void SetVec3(const std::string& name, f32 x, f32 y, f32 z) const;
-        void SetVec4(const std::string& name, const glm::vec4& value) const;
-        void SetVec4(const std::string& name, f32 x, f32 y, f32 z, f32 w) const;
-        void SetMat2(const std::string& name, const glm::mat2& mat) const;
-        void SetMat3(const std::string& name, const glm::mat3& mat) const;
-        void SetMat4(const std::string& name, const glm::mat4& mat) const;
+	void use() const;
+	void set_bool(const std::string &name, b8 value) const;
+	void set_int32(const std::string &name, i32 value) const;
+	void set_float(const std::string &name, f32 value) const;
+	void set_vec2(const std::string &name, const glm::vec2 &value) const;
+	void set_vec2(const std::string &name, f32 x, f32 y) const;
+	void set_vec3(const std::string &name, const glm::vec3 &value) const;
+	void set_vec3(const std::string &name, f32 x, f32 y, f32 z) const;
+	void set_vec4(const std::string &name, const glm::vec4 &value) const;
+	void set_vec4(const std::string &name, f32 x, f32 y, f32 z, f32 w) const;
+	void set_mat2(const std::string &name, const glm::mat2 &mat) const;
+	void set_mat3(const std::string &name, const glm::mat3 &mat) const;
+	void set_mat4(const std::string &name, const glm::mat4 &mat) const;
 
     private:
-        u32        m_ProgramId = 0;
-        b8         m_IsValid   = false;
-        mutable b8 m_Warned    = false;
-    };
+	u32        m_program_id = 0;
+	b8         m_is_valid = false;
+	mutable b8 m_warned = false;
+};
 } // namespace core

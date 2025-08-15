@@ -1,7 +1,7 @@
 #pragma once
 
 #ifdef ENABLE_ASSERTIONS
-    #include "utils/internal/assertions_on.inl"
+#	include "utils/internal/assertions_on.h"
 #else
-    #include "utils/internal/assertions_off.inl"
+#	include "utils/internal/assertions_off.h"
 #endif

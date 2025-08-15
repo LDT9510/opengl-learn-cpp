@@ -8,87 +8,85 @@
 
 namespace core
 {
-    EventHandler::EventHandler(Config config) :
-        m_WindowResizingCallback{std::move(config.WindowsResizingCallback)},
-        m_WindowQuitCallback{std::move(config.WindowsQuitCallback)}
-    {
-    }
+event_handler::event_handler(config config)
+        : m_window_resizing_fn{ std::move(config.windows_resizing_callback) }
+        , m_window_quit_fn{ std::move(config.windows_quit_callback) }
+{
+}
 
-    // TODO either handle all events here or defer them
-    void EventHandler::CollectInput()
-    {
-        m_LastKeyboardState      = m_CurrentKeyboardState;
-        m_KeyboardInputAvailable = false;
+// TODO either handle all events here or defer them
+void event_handler::collect_input()
+{
+	m_last_keyboard_state = m_current_keyboard_state;
+	m_keyboard_input_available = false;
 
-        SDL_Event e;
-        while (SDL_PollEvent(&e))
-        {
-            dev_ui::ProcessInput(e);
+	SDL_Event e;
+	while (SDL_PollEvent(&e)) {
+		dev_ui::process_input(e);
 
-            switch (e.type)
-            {
-                case SDL_EVENT_QUIT:
-                    m_WindowQuitCallback();
-                    break;
+		switch (e.type) {
+		case SDL_EVENT_QUIT:
+			m_window_quit_fn();
+			break;
 
-                case SDL_EVENT_WINDOW_PIXEL_SIZE_CHANGED:
-                    m_WindowResizingCallback(e.window.data1, e.window.data2);
-                    break;
+		case SDL_EVENT_WINDOW_PIXEL_SIZE_CHANGED:
+			m_window_resizing_fn(e.window.data1, e.window.data2);
+			break;
 
-                case SDL_EVENT_MOUSE_WHEEL:
-                    if (m_MouseWheelDirectionCallback) (*m_MouseWheelDirectionCallback)(e.wheel.y);
-                    break;
+		case SDL_EVENT_MOUSE_WHEEL:
+			if (m_mouse_wheel_direction_fn)
+				(*m_mouse_wheel_direction_fn)(e.wheel.y);
+			break;
 
-                case SDL_EVENT_MOUSE_MOTION:
-                    if (m_MouseOffsetCallBack)
-                    {
-                        (*m_MouseOffsetCallBack)(e.motion.xrel, -e.motion.yrel);
-                    }
-                    break;
+		case SDL_EVENT_MOUSE_MOTION:
+			if (m_mouse_offset_fn) {
+				(*m_mouse_offset_fn)(e.motion.xrel, -e.motion.yrel);
+			}
+			break;
 
-                case SDL_EVENT_KEY_DOWN:
-                case SDL_EVENT_KEY_UP:
-                    m_KeyboardInputAvailable = true;
-                    break;
+		case SDL_EVENT_KEY_DOWN:
+		case SDL_EVENT_KEY_UP:
+			m_keyboard_input_available = true;
+			break;
 
-                default:
-                    break;
-            }
-        }
+		default:
+			break;
+		}
+	}
 
-        i32       numKeys;
-        const b8* keyboardState = SDL_GetKeyboardState(&numKeys);
-        std::copy_n(keyboardState, numKeys, m_CurrentKeyboardState.data()); // store the previous state
-    }
+	i32       num_keys;
+	const b8 *keyboard_state = SDL_GetKeyboardState(&num_keys);
+	std::copy_n(keyboard_state, num_keys,
+	            m_current_keyboard_state.data()); // store the previous state
+}
 
-    void EventHandler::ProcessInput() const
-    {
-        if (m_KeyboardInputAvailable && m_KeyboardInputHandlerCallback)
-        {
-            (*m_KeyboardInputHandlerCallback)(*this);
-        }
-    }
+void event_handler::process_input() const
+{
+	if (m_keyboard_input_available && m_keyboard_input_handler_fn) {
+		(*m_keyboard_input_handler_fn)(*this);
+	}
+}
 
-    b8 EventHandler::IsKeyPressed(SDL_Keycode keyCode) const
-    {
-        return m_CurrentKeyboardState[SDL_GetScancodeFromKey(keyCode, nullptr)];
-    }
+b8 event_handler::is_key_pressed(SDL_Keycode key_code) const
+{
+	return m_current_keyboard_state[SDL_GetScancodeFromKey(key_code, nullptr)];
+}
 
-    b8 EventHandler::IsKeyReleased(SDL_Keycode keyCode) const
-    {
-        return !IsKeyPressed(SDL_GetScancodeFromKey(keyCode, nullptr));
-    }
+b8 event_handler::is_key_released(SDL_Keycode key_code) const
+{
+	return !is_key_pressed(SDL_GetScancodeFromKey(key_code, nullptr));
+}
 
-    b8 EventHandler::IsKeyJustPressed(SDL_Keycode keyCode) const
-    {
-        auto scancode = SDL_GetScancodeFromKey(keyCode, nullptr);
-        return m_CurrentKeyboardState[scancode] && !m_LastKeyboardState[scancode];
-    }
+b8 event_handler::is_key_just_pressed(SDL_Keycode key_code) const
+{
+	auto scancode = SDL_GetScancodeFromKey(key_code, nullptr);
+	return m_current_keyboard_state[scancode] && !m_last_keyboard_state[scancode];
+}
 
-    void EventHandler::ClearOptionalCallbacks()
-    {
-        m_MouseOffsetCallBack          = std::nullopt;
-        m_MouseWheelDirectionCallback  = std::nullopt;
-        m_KeyboardInputHandlerCallback = std::nullopt;
-    }
+void event_handler::clear_optional_callbacks()
+{
+	m_mouse_offset_fn = std::nullopt;
+	m_mouse_wheel_direction_fn = std::nullopt;
+	m_keyboard_input_handler_fn = std::nullopt;
+}
 } // namespace core

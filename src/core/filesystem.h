@@ -11,74 +11,83 @@
 
 namespace core
 {
-    template<const char* TBasePath>
-    class FileType
-    {
-    public:
-        explicit FileType(std::string_view path) :
-            m_Path{fmt::format("/{}/{}", TBasePath, path)}
-        {
-        }
+template<size_t N>
+struct str_lit {
+	char value[N];
 
-        std::string GetPath() const
-        {
-            return m_Path;
-        }
+	explicit constexpr str_lit(const char (&str)[N])
+	        : value{}
+	{
+		std::copy_n(str, N, value);
+	}
+};
+
+template<str_lit TBasePath>
+class file_type {
+    public:
+	explicit file_type(std::string_view path)
+	        : m_path{ fmt::format("/{}/{}", TBasePath.value, path) }
+	{
+	}
+
+	std::string get_path() const
+	{
+		return m_path;
+	}
 
     private:
-        std::string m_Path;
-    };
+	std::string m_path;
+};
 
-    inline constexpr char K_CORE_SHADER_BASE_PATH[]{"shaders"};
-    using CoreShaderFile = FileType<K_CORE_SHADER_BASE_PATH>;
+using core_shader_file_t = file_type<str_lit("shaders")>;
+using texture_file_t = file_type<str_lit("textures")>;
 
-    inline constexpr char K_TEXTURE_BASE_PATH[]{"textures"};
-    using TextureFile = FileType<K_TEXTURE_BASE_PATH>;
-
-    class Filesystem
-    {
-        template<typename T>
-        // NOLINTNEXTLINE (*-convert-member-functions-to-static)
-        void ReadFileInternal(const std::string& fileName, T* outBuf) const
-        {
-            if (auto* file = PHYSFS_openRead(fileName.c_str()))
-            {
-                i64 fileSize = PHYSFS_fileLength(file);
-                outBuf->resize(fileSize);
-                PHYSFS_readBytes(file, outBuf->data(), fileSize); // assume success for now
-                PHYSFS_close(file);
-            }
-            else
-            {
-                SPDLOG_ERROR("Cannot open '{}': {}", fileName, PHYSFS_getLastError());
-            }
-        }
+class filesystem {
+	template<typename T>
+	void read_file_internal(const std::string &file_name, T *out_buf) const
+	{
+		if (auto *file = PHYSFS_openRead(file_name.c_str())) {
+			i64 file_size = PHYSFS_fileLength(file);
+			out_buf->resize(file_size);
+			PHYSFS_readBytes(file, out_buf->data(),
+			                 file_size); // assume success for now
+			PHYSFS_close(file);
+		} else {
+			SPDLOG_ERROR("Cannot open '{}': {}", file_name, PHYSFS_getLastError());
+		}
+	}
 
     public:
-        ~Filesystem();
+	~filesystem();
 
-        template<typename TOutput, const char* TBaseDir>
-        TOutput ReadFile(const FileType<TBaseDir>& fileName) const
-        {
-            auto    p = fileName.GetPath();
-            TOutput buf;
-            ReadFileInternal(p, &buf);
-            return buf;
-        }
+	filesystem(const filesystem &other) = delete;
+	filesystem &operator=(const filesystem &other) = default;
+	filesystem(filesystem &&other) noexcept = default;
+	filesystem &operator=(filesystem &&other) noexcept = default;
 
-        // NOLINTNEXTLINE (*-convert-member-functions-to-static)
-        bool FileExists(const std::string& fileName) const
-        {
-            return PHYSFS_exists(fileName.c_str());
-        }
+	template<typename TOutput, str_lit BaseDir>
+	TOutput read_file(const file_type<BaseDir> &file_name) const
+	{
+		auto    p = file_name.get_path();
+		TOutput buf;
+		read_file_internal(p, &buf);
+		return buf;
+	}
+
+	// NOLINTNEXTLINE(*-convert-member-functions-to-static)
+	bool file_exists(const std::string &file_name) const
+	{
+		return PHYSFS_exists(file_name.c_str());
+	}
 
     private:
-        explicit Filesystem(char** platformArgument);
+	explicit filesystem(char **platform_argument);
 
-        std::string m_ContentRoot;
+	std::string m_content_root;
 
-        friend Singleton<Filesystem>;
-    };
+	friend singleton<filesystem>;
+};
 
-    DECLARE_SINGLETON(fs, Filesystem);
+// ReSharper disable once CppInconsistentNaming
+DECLARE_SINGLETON(fs, filesystem);
 } // namespace core

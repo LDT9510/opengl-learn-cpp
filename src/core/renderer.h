@@ -5,57 +5,32 @@
 
 namespace core
 {
-    class EventHandler;
-    class Filesystem;
+class event_handler;
+class filesystem;
 
-    class Renderer
-    {
+class renderer {
     public:
-        Renderer();
-        Renderer(const Renderer& other)            = delete;
-        Renderer& operator=(const Renderer& other) = delete;
-        ~Renderer();
+	renderer();
+	~renderer();
 
-        Renderer(Renderer&& other) noexcept
-        {
-            *this = std::move(other);
-        }
+	renderer(const renderer &other) = delete;
+	renderer &operator=(const renderer &other) = delete;
+	renderer(renderer &&other) noexcept = default;
+	renderer &operator=(renderer &&other) noexcept = default;
 
-        Renderer& operator=(Renderer&& other) noexcept
-        {
-            if (this == &other) return *this;
-
-            m_Vao               = other.m_Vao;
-            m_Vbo               = other.m_Vbo;
-            m_Ebo               = other.m_Ebo;
-            m_Texture           = other.m_Texture;
-            m_Shader            = std::move(other.m_Shader);
-            m_IsWireframeActive = other.m_IsWireframeActive;
-
-            // when moved, reset "other" program ID so that its destructor
-            // don't destroy the program
-            other.m_Vao     = 0;
-            other.m_Vbo     = 0;
-            other.m_Ebo     = 0;
-            other.m_Texture = 0;
-
-            return *this;
-        }
-
-        void SetupRendering() const;
-        void Render() const;
-        void HandleInput(const EventHandler& eventHandler);
-        void PrepareDevUi();
-        b8   ReloadShaders();
-
+	void setup_rendering() const;
+	void render() const;
+	void handle_input(const event_handler &event_handler);
+	void prepare_dev_ui();
+	b8   reload_shaders();
 
     private:
-        u32    m_Vao{};
-        u32    m_Vbo{};
-        u32    m_Ebo{};
-        u32    m_Texture{};
-        Shader m_Shader;
-        b8     m_IsShaderReloading{};
-        b8     m_IsWireframeActive{};
-    };
+	shader m_shader;
+	u32    m_vao{};
+	u32    m_vbo{};
+	u32    m_ebo{};
+	u32    m_texture{};
+	b8     m_is_shader_reloading{};
+	b8     m_is_wireframe_active{};
+};
 } // namespace core

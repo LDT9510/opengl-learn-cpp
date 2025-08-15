@@ -8,43 +8,41 @@
 
 namespace core
 {
-    template<typename T>
-    class Singleton
-    {
+template<typename T>
+class singleton {
     public:
-        static const T& Instance()
-        {
-            CHECK_F(s_Instance != nullptr, "Singleton '{}' not initialized.", s_Name);
-            return *s_Instance;
-        }
+	static const T &instance()
+	{
+		check_f(s_instance != nullptr, "Singleton '{}' not initialized.", s_name);
+		return *s_instance;
+	}
 
-        template<typename... Args>
-        static void Create(Args&&... args)
-        {
-            SPDLOG_INFO("Initializing '{}' singleton.", s_Name);
-            if (!s_Instance)
-            {
-                s_Instance = new T{std::forward<Args>(args)...};
-            }
-        };
+	template<typename... Args>
+	static void create(Args &&...args)
+	{
+		SPDLOG_INFO("Initializing '{}' singleton.", s_name);
+		if (!s_instance) {
+			s_instance = new T{ std::forward<Args>(args)... };
+		}
+	};
 
-        static void Destroy()
-        {
-            SPDLOG_INFO("De-initializing '{}' singleton.", s_Name);
-            delete s_Instance;
-        }
+	static void destroy()
+	{
+		SPDLOG_INFO("De-initializing '{}' singleton.", s_name);
+		delete s_instance;
+	}
 
     private:
-        static T*               s_Instance;
-        static std::string_view s_Name;
-    };
+	static T               *s_instance;
+	static std::string_view s_name;
+};
 
-#define DECLARE_SINGLETON(varName, Type)                     \
-    template<>                                               \
-    inline Type* Singleton<Type>::s_Instance = nullptr;      \
-    template<>                                               \
-    inline std::string_view Singleton<Type>::s_Name = #Type; \
-                                                             \
-    using varName = Singleton<Type>;
+#define DECLARE_SINGLETON(var_name, type)                        \
+	template<>                                               \
+	inline type *singleton<type>::s_instance = nullptr;      \
+	template<>                                               \
+	inline std::string_view singleton<type>::s_name = #type; \
+                                                                 \
+	using var_name = singleton<type>;
 
 } // namespace core

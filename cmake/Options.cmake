@@ -1,2 +1,2 @@
 # Put global options here
-# option(TOGGLE_FEATURE "Cool feature on/off" OFF)
+option(FORCE_DISABLE_LOGGING "Disable all logging" OFF)
