@@ -34,8 +34,9 @@ void event_handler::collect_input()
 			break;
 
 		case SDL_EVENT_MOUSE_WHEEL:
-			if (m_mouse_wheel_direction_fn)
+			if (m_mouse_wheel_direction_fn) {
 				(*m_mouse_wheel_direction_fn)(e.wheel.y);
+			}
 			break;
 
 		case SDL_EVENT_MOUSE_MOTION:
